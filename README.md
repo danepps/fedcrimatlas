@@ -6,7 +6,8 @@ A static, searchable companion to the federal criminal common-lawmaking census. 
 
 - change-over-time figures for the 896-case corpus;
 - a Hudson & Goodwin citation genealogy that separates judicial use from counsel-only and false-positive citator records;
-- filters and coded evidence for every included case; and
+- filters and coded evidence for every included case;
+- a direct CourtListener full-opinion link for every included case; and
 - a methods page describing double coding, adjudication, prompt sensitivity, and unresolved smaller disputes.
 
 ## Refresh the data
@@ -49,4 +50,5 @@ No database server, API key, or runtime environment variable is required. All At
 - Mode, hook, and source-use detail remains provisional because smaller disputes were intentionally not adjudicated.
 - Modes and acknowledgments are nonexclusive.
 - The general citation graph is a regex-derived floor.
+- Full-opinion links point to CourtListener, an open-access source, rather than representing an official U.S. Reports copy.
 - Hudson role labels are nonexclusive research tags; the site preserves the passage and record status so readers can audit them.

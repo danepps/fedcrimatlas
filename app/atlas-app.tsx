@@ -15,6 +15,7 @@ type CaseRecord = {
   id: number;
   name: string;
   citation: string;
+  full_text_url: string;
   date: string;
   year: number;
   period: string;
@@ -432,6 +433,9 @@ function CaseDrawer({ item, data, onClose, onNavigate }: { item: CaseRecord; dat
         <p className="eyebrow">{item.period} · Case {item.id}</p>
         <h2 id="case-title">{item.name}</h2>
         <p className="drawer-citation">{item.citation || item.date}</p>
+        <a className="opinion-link" href={item.full_text_url} target="_blank" rel="noreferrer">
+          Read full opinion on CourtListener <span aria-hidden="true">↗</span>
+        </a>
         <div className="drawer-verdict"><strong>{item.mover ? "Common-law-like move" : "No common-law-like move"}</strong><span>{item.modes.map(display).join(" · ")}</span></div>
         <dl>
           <div><dt>Acknowledgment</dt><dd>{item.acknowledgments.map(display).join(" · ") || "—"}</dd></div>

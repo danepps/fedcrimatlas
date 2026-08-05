@@ -191,6 +191,8 @@ blockquote { margin: 18px 0; padding-left: 18px; border-left: 3px solid var(--go
 .case-drawer { width: min(760px, 94vw); height: 100%; overflow-y: auto; background: var(--paper); box-shadow: -20px 0 60px rgba(0,0,0,.25); padding: 48px clamp(24px, 5vw, 64px); position: relative; }
 .close-button { position: sticky; top: 0; float: right; z-index: 2; width: 42px; height: 42px; border: 1px solid var(--line); background: var(--white); cursor: pointer; font-size: 25px; }
 .case-drawer h2 { margin: 8px 0; font: 500 clamp(34px, 5vw, 54px)/1.04 Georgia, serif; }
+.opinion-link { display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 22px; padding: 11px 15px; border: 1px solid var(--rust-dark); color: var(--rust-dark); background: var(--white); font-size: 13px; font-weight: 800; text-decoration: none; }
+.opinion-link:hover, .opinion-link:focus-visible { color: white; background: var(--rust-dark); outline: none; }
 .drawer-verdict { display: flex; justify-content: space-between; gap: 12px; padding: 18px 0; border-block: 1px solid var(--line); }
 .drawer-verdict span { color: var(--ink-soft); text-transform: capitalize; text-align: right; }
 .case-drawer dl { display: grid; margin: 24px 0 36px; }
