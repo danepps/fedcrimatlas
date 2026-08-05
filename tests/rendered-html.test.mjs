@@ -37,6 +37,7 @@ test("ships the reconciled data and GitHub Pages build surface", async () => {
   assert.equal(parsed.cases.length, 896);
   assert.equal(parsed.summary.headline.movers, 460);
   assert.equal(parsed.summary.headline.rate, 51.3);
+  assert.equal(parsed.cases.filter((item) => /^https:\/\/www\.courtlistener\.com\/opinion\/\d+\/$/.test(item.full_text_url)).length, 896);
   assert.ok(parsed.hudson.entries.length >= 80);
   assert.match(page, /atlas-data\.json/);
   assert.match(layout, /Federal Criminal Common Law Atlas/);
