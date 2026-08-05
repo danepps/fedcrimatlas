@@ -212,7 +212,7 @@ function ChangeView({ data }: { data: AtlasData }) {
 
       <section className="content-section">
         <SectionIntro kicker="Figure 4" title="The interpretive toolkit changes with the doctrine">
-          State precedent and treatises matter early; legislative materials and the Model Penal Code rise later. These fields retain unresolved smaller disputes and are best read as directional.
+          State precedent and treatises matter early; legislative materials and the Model Penal Code rise later. Read these secondary source-use measures as directional.
         </SectionIntro>
         <div className="toolkit-grid">
           {summary.source_use_by_period.map((row) => (
