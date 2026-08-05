@@ -22,13 +22,15 @@ test("server-renders the Atlas shell and headline findings", async () => {
   assert.match(html, /The Court renounced common-law crimes/);
   assert.match(html, />460</);
   assert.match(html, /Hudson genealogy/);
+  assert.doesNotMatch(html, /Prompt sensitivity|correction process/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/);
 });
 
 test("ships the reconciled data and GitHub Pages build surface", async () => {
-  const [page, layout, data, packageJson, nextConfig] = await Promise.all([
+  const [page, layout, app, data, packageJson, nextConfig] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/atlas-app.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/data/atlas-data.json", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../next.config.ts", import.meta.url), "utf8"),
@@ -37,10 +39,16 @@ test("ships the reconciled data and GitHub Pages build surface", async () => {
   assert.equal(parsed.cases.length, 896);
   assert.equal(parsed.summary.headline.movers, 460);
   assert.equal(parsed.summary.headline.rate, 51.3);
-  assert.equal(parsed.cases.filter((item) => /^https:\/\/www\.courtlistener\.com\/opinion\/\d+\/$/.test(item.full_text_url)).length, 896);
+  const opinionUrl = /^https:\/\/www\.courtlistener\.com\/opinion\/\d+\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/;
+  assert.equal(parsed.cases.filter((item) => opinionUrl.test(item.full_text_url)).length, 896);
+  assert.equal(new Set(parsed.cases.map((item) => item.full_text_url)).size, 896);
   assert.ok(parsed.hudson.entries.length >= 80);
   assert.match(page, /atlas-data\.json/);
   assert.match(layout, /Federal Criminal Common Law Atlas/);
+  const researchViews = app.slice(app.indexOf("function ChangeView"), app.indexOf("function MethodsView"));
+  const methodsView = app.slice(app.indexOf("function MethodsView"));
+  assert.doesNotMatch(researchViews, /counsel-only|false positive|prompt sensitivity|adjudication|<span>Status<\/span>/i);
+  assert.match(methodsView, /excluded from the research explorer and role charts/);
   assert.match(packageJson, /"build:pages"/);
   assert.match(nextConfig, /output:\s*pagesBuild\s*\?\s*"export"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
