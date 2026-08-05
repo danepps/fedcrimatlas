@@ -227,32 +227,16 @@ function ChangeView({ data }: { data: AtlasData }) {
         </div>
       </section>
 
-      <section className="content-section split-section">
-        <div>
-          <SectionIntro kicker="Figure 5" title="Where lawmaking concentrates">
-            Topic tags identify doctrinal neighborhoods, not mutually exclusive causes. The strongest rates appear in mens rea, accomplice liability, burden allocation, public-welfare offenses, and criminal contempt.
-          </SectionIntro>
-          <div className="topic-list">
-            {summary.topic_stats.slice(0, 14).map((row) => (
-              <div className="topic-row" key={row.topic}>
-                <span>{display(row.topic)}</span><Bar value={row.cases} max={maxTopic} tone="gold" /><strong>{row.rate}%</strong><small>n={row.cases}</small>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div>
-          <SectionIntro kicker="Figure 6" title="The headline survived a demanding correction process">
-            Blind adjudication reduced the preliminary count; an independent review of every headline-changing decision and five-case tiebreak produced the final 460.
-          </SectionIntro>
-          <div className="flow-chart">
-            {summary.adjudication_flow.map((row, index: number) => (
-              <div key={row.stage}><span>{index + 1}</span><strong>{row.movers}</strong><p>{row.stage}</p><small>{row.rate}% of 896</small></div>
-            ))}
-          </div>
-          <div className="callout">
-            <strong>Prompt sensitivity is substantive.</strong>
-            <p>On the same 20 cases, a same-model shadow run coded 55% “none” with the anti-overcoding instruction and 15% without it. Eight headline verdicts flipped. The unqualified run was quarantined.</p>
-          </div>
+      <section className="content-section">
+        <SectionIntro kicker="Figure 5" title="Where lawmaking concentrates">
+          Topic tags identify doctrinal neighborhoods, not mutually exclusive causes. The strongest rates appear in mens rea, accomplice liability, burden allocation, public-welfare offenses, and criminal contempt.
+        </SectionIntro>
+        <div className="topic-list">
+          {summary.topic_stats.slice(0, 14).map((row) => (
+            <div className="topic-row" key={row.topic}>
+              <span>{display(row.topic)}</span><Bar value={row.cases} max={maxTopic} tone="gold" /><strong>{row.rate}%</strong><small>n={row.cases}</small>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -275,15 +259,14 @@ function ChangeView({ data }: { data: AtlasData }) {
 function HudsonView({ data, onOpenCase }: { data: AtlasData; onOpenCase: (id: number) => void }) {
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");
-  const [status, setStatus] = useState("verified");
   const roles = Object.keys(data.hudson.role_counts);
   const entries = useMemo(() => data.hudson.entries.filter((entry) => {
+    const isJudicialUse = entry.status === "verified judicial context" || entry.status === "application and express preservation";
     const text = `${entry.name} ${entry.citation} ${entry.contexts.map((item) => item.excerpt).join(" ")}`.toLowerCase();
     const matchesQuery = !query || text.includes(query.toLowerCase());
     const matchesRole = role === "all" || entry.roles.includes(role);
-    const matchesStatus = status === "all" || (status === "verified" ? entry.status.includes("verified") || entry.status.includes("application") : entry.status === status);
-    return matchesQuery && matchesRole && matchesStatus;
-  }), [data.hudson.entries, query, role, status]);
+    return isJudicialUse && matchesQuery && matchesRole;
+  }), [data.hudson.entries, query, role]);
 
   return (
     <main id="main-content">
@@ -293,8 +276,8 @@ function HudsonView({ data, onOpenCase }: { data: AtlasData; onOpenCase: (id: nu
         <p>The 1812 opinion began as a limit on inferior-court criminal jurisdiction. Later Courts made it a statutory-grounding canon, an Erie-like lawmaking limit, and a source of inherent judicial power.</p>
         <div className="hudson-counts">
           <div><strong>{data.hudson.status_counts["verified judicial context"] + 1}</strong><span>verified judicial uses or express application</span></div>
-          <div><strong>{data.hudson.status_counts["counsel argument only"]}</strong><span>counsel-only citator artifacts</span></div>
-          <div><strong>{data.hudson.status_counts["false positive"]}</strong><span>confirmed false positive</span></div>
+          <div><strong>{data.hudson.role_counts["criminal legality and statutory definition"]}</strong><span>criminal-legality or statutory-definition uses</span></div>
+          <div><strong>{data.hudson.role_counts["inherent judicial power"]}</strong><span>inherent-power uses</span></div>
         </div>
       </section>
 
@@ -328,26 +311,24 @@ function HudsonView({ data, onOpenCase }: { data: AtlasData; onOpenCase: (id: nu
       </section>
 
       <section className="content-section">
-        <SectionIntro kicker="Hudson explorer" title="Inspect every record and its provenance">
-          Search the citing passage, filter by role, and keep counsel arguments and database-only records separate from judicial use.
+        <SectionIntro kicker="Hudson explorer" title="Trace how later opinions used the case">
+          Search verified judicial passages by case, citation, quoted language, or doctrinal role.
         </SectionIntro>
         <div className="filters hudson-filters">
           <label className="search-field"><span>Search</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Case, citation, or quoted phrase" /></label>
           <label><span>Role</span><select value={role} onChange={(event) => setRole(event.target.value)}><option value="all">All roles</option>{roles.map((item) => <option key={item}>{item}</option>)}</select></label>
-          <label><span>Status</span><select value={status} onChange={(event) => setStatus(event.target.value)}><option value="verified">Verified judicial uses</option><option value="all">All records</option>{Object.keys(data.hudson.status_counts).map((item) => <option key={item}>{item}</option>)}</select></label>
         </div>
-        <p className="result-count">{entries.length} records shown</p>
+        <p className="result-count">{entries.length} judicial uses shown</p>
         <div className="hudson-list">
           {entries.map((entry) => (
             <article key={entry.id}>
               <div className="year-badge">{entry.year}</div>
               <div>
-                <p className="eyebrow">{entry.status}</p>
                 <h3>{entry.name}</h3>
                 <p className="citation">{entry.citation}</p>
                 <div className="chips">{entry.roles.map((item) => <span key={item}>{item}</span>)}</div>
                 {entry.contexts[0] && <blockquote>{entry.contexts[0].excerpt}</blockquote>}
-                {entry.note && <p className="entry-note">{entry.note}</p>}
+                {!entry.contexts[0] && entry.note && !entry.note.includes("OCR") && <p className="entry-note">{entry.note}</p>}
                 {entry.case_id && <button className="text-button" onClick={() => onOpenCase(entry.case_id!)}>Open this case in the Atlas →</button>}
               </div>
             </article>
@@ -380,7 +361,7 @@ function CasesView({ data, selected, setSelected }: { data: AtlasData; selected:
 
   const exportCsv = () => {
     const escape = (value: string | number | boolean) => `"${String(value).replaceAll('"', '""')}"`;
-    const lines = [["case_id", "case_name", "citation", "year", "mover", "modes", "acknowledgments", "topics"].join(","), ...filtered.map((item) => [item.id, item.name, item.citation, item.year, item.mover, item.modes.join(" | "), item.acknowledgments.join(" | "), item.topics.join(" | ")].map(escape).join(","))];
+    const lines = [["case_id", "case_name", "citation", "year", "full_text_url", "mover", "modes", "acknowledgments", "topics"].join(","), ...filtered.map((item) => [item.id, item.name, item.citation, item.year, item.full_text_url, item.mover, item.modes.join(" | "), item.acknowledgments.join(" | "), item.topics.join(" | ")].map(escape).join(","))];
     const link = document.createElement("a");
     link.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" }));
     link.download = "fccl-atlas-filtered-cases.csv";
@@ -391,7 +372,7 @@ function CasesView({ data, selected, setSelected }: { data: AtlasData; selected:
   return (
     <main id="main-content">
       <section className="atlas-heading">
-        <div><p className="eyebrow">896 cases · complete double coding</p><h1>Case Atlas</h1><p>Search cases, statutes, topics, and coded evidence. Filters work together; download the current result set as CSV.</p></div>
+        <div><p className="eyebrow">Supreme Court · 1789–2026</p><h1>Case Atlas</h1><p>Search 896 cases by name, statute, doctrine, and evidence passage. Filters work together; download the current result set as CSV.</p></div>
         <button className="download-button" onClick={exportCsv}>Download filtered CSV</button>
       </section>
       <section className="atlas-workspace">
@@ -408,7 +389,7 @@ function CasesView({ data, selected, setSelected }: { data: AtlasData; selected:
           <div className="case-grid">
             {filtered.slice(0, limit).map((item) => (
               <button className="case-card" key={item.id} onClick={() => setSelected(item)}>
-                <span className={`verdict ${item.mover ? "move" : "no-move"}`}>{item.mover ? "common-law-like move" : "no coded move"}</span>
+                <span className={`verdict ${item.mover ? "move" : "no-move"}`}>{item.mover ? "common-law-like move" : "no common-law-like move"}</span>
                 <h3>{item.name}</h3>
                 <p>{item.citation || item.date} · {item.year}</p>
                 <div className="chips">{item.modes.map((modeName) => <span key={modeName}>{display(modeName)}</span>)}</div>
@@ -430,7 +411,7 @@ function CaseDrawer({ item, data, onClose, onNavigate }: { item: CaseRecord; dat
     <div className="drawer-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <aside className="case-drawer" role="dialog" aria-modal="true" aria-labelledby="case-title">
         <button className="close-button" onClick={onClose} aria-label="Close case details">×</button>
-        <p className="eyebrow">{item.period} · Case {item.id}</p>
+        <p className="eyebrow">{item.period}</p>
         <h2 id="case-title">{item.name}</h2>
         <p className="drawer-citation">{item.citation || item.date}</p>
         <a className="opinion-link" href={item.full_text_url} target="_blank" rel="noreferrer">
@@ -442,11 +423,11 @@ function CaseDrawer({ item, data, onClose, onNavigate }: { item: CaseRecord; dat
           <div><dt>Statutory hook</dt><dd>{item.hooks.map(display).join(" · ") || "—"}</dd></div>
           <div><dt>Topics</dt><dd>{item.topics.map(display).join(" · ") || "—"}</dd></div>
           <div><dt>Statutes</dt><dd>{item.statutes.join(" · ") || "—"}</dd></div>
-          <div><dt>Opinion authors in data</dt><dd>{item.opinion_authors.join(" · ") || "—"}</dd></div>
+          <div><dt>Opinion authors</dt><dd>{item.opinion_authors.join(" · ") || "—"}</dd></div>
         </dl>
         <h3>Coded evidence</h3>
         <div className="evidence-list">
-          {item.evidence.map((row, index) => <article key={`${row.field}-${index}`}><p className="eyebrow">{display(row.field)} · {row.value}</p>{row.quote && <blockquote>“{row.quote}”</blockquote>}<small>{row.pincite || "No pincite"} · {row.coder}</small></article>)}
+          {item.evidence.map((row, index) => <article key={`${row.field}-${index}`}><p className="eyebrow">{display(row.field)} · {row.value}</p>{row.quote && <blockquote>“{row.quote}”</blockquote>}{row.pincite && <small>{row.pincite}</small>}</article>)}
         </div>
         {citations.length > 0 && <><h3>Earlier corpus cases cited</h3><div className="citation-links">{citations.slice(0, 20).map((record) => <button key={record.id} onClick={() => onNavigate(record.id)}>{record.name} <span>{record.citation}</span></button>)}</div></>}
       </aside>
@@ -461,10 +442,24 @@ function MethodsView({ data }: { data: AtlasData }) {
       <section className="methods-grid">
         <article><span>01</span><h2>Population</h2><p>The unit is a Supreme Court decision in a constructed census of 896 included federal criminal-law cases, 1789–2026. The corpus is not a random sample and does not support causal inference.</p></article>
         <article><span>02</span><h2>Independent coding</h2><p>Every included case received at least two independent primary coding runs under codebook v0.6. Multi-mode and multi-acknowledgment coding is nonexclusive.</p></article>
-        <article><span>03</span><h2>Blind adjudication</h2><p>All 179 headline-relevant disputes were adjudicated. Every one of the 57 headline-changing decisions received an independent blind reread; five disagreements received a third tiebreak.</p></article>
+        <article><span>03</span><h2>Blind adjudication</h2><p>All 179 headline-relevant disputes were adjudicated. Every one of the 57 headline-changing decisions received an independent blind reread; five disagreements received a third tiebreak. A separate 20-case prompt test was quarantined from the headline.</p></article>
         <article><span>04</span><h2>What is final</h2><p>The 460/896 binary headline and acknowledgment distribution are final under the protocol. Smaller mode, hook, and source-use disputes were intentionally left unresolved and are labeled provisional.</p></article>
-        <article><span>05</span><h2>Hudson audit</h2><p>Commercial citator results were cross-checked against opinion full text. Counsel arguments printed in early U.S. Reports, false positives, and uncertain records are not silently treated as judicial citations.</p></article>
+        <article><span>05</span><h2>Hudson audit</h2><p>Commercial citator results were cross-checked against opinion full text. Five counsel-only appearances, one false positive, one unresolved record, and one topic-only record remain in the audit data but are excluded from the research explorer and role charts.</p></article>
         <article><span>06</span><h2>Citation graph</h2><p>The case-to-case graph is extracted by reporter-citation regex from local opinion text. It is a floor: name-only references and OCR failures remain invisible.</p></article>
+      </section>
+      <section className="content-section">
+        <SectionIntro kicker="Measurement audit" title="How the headline was tested">
+          Adjudication and prompt-sensitivity checks are reported here so the research views can remain focused on cases, doctrine, and change over time.
+        </SectionIntro>
+        <div className="flow-chart">
+          {data.summary.adjudication_flow.map((row, index: number) => (
+            <div key={row.stage}><span>{index + 1}</span><strong>{row.movers}</strong><p>{row.stage}</p><small>{row.rate}% of 896</small></div>
+          ))}
+        </div>
+        <div className="callout">
+          <strong>Prompt sensitivity check</strong>
+          <p>On the same 20 cases, a same-model shadow run coded 55% “none” with the anti-overcoding instruction and 15% without it. Eight headline verdicts flipped. The unqualified run was quarantined and never entered the Atlas headline.</p>
+        </div>
       </section>
       <section className="content-section">
         <SectionIntro kicker="Known limits" title="Precision without false certainty">
@@ -501,7 +496,7 @@ export function AtlasApp({ data: rawData }: { data: unknown }) {
       {view === "hudson" && <HudsonView data={data} onOpenCase={openCase} />}
       {view === "cases" && <CasesView data={data} selected={selected} setSelected={setSelected} />}
       {view === "methods" && <MethodsView data={data} />}
-      <footer><span>Federal Criminal Common Law Atlas</span><p>Canonical data: fccl.db · Codebook v0.6 · Descriptive corpus analysis</p></footer>
+      <footer><span>Federal Criminal Common Law Atlas</span><p>896 Supreme Court cases · 1789–2026 · Updated Aug. 5, 2026</p></footer>
     </div>
   );
 }

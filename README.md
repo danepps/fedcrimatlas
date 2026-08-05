@@ -5,7 +5,7 @@ A static, searchable companion to the federal criminal common-lawmaking census. 
 **Live site:** https://danepps.github.io/fedcrimatlas/
 
 - change-over-time figures for the 896-case corpus;
-- a Hudson & Goodwin citation genealogy that separates judicial use from counsel-only and false-positive citator records;
+- a Hudson & Goodwin genealogy of 76 verified judicial uses across five interpretive phases;
 - filters and coded evidence for every included case;
 - a direct CourtListener full-opinion link for every included case; and
 - a methods page describing double coding, adjudication, prompt sensitivity, and unresolved smaller disputes.

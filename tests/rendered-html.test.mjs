@@ -22,13 +22,15 @@ test("server-renders the Atlas shell and headline findings", async () => {
   assert.match(html, /The Court renounced common-law crimes/);
   assert.match(html, />460</);
   assert.match(html, /Hudson genealogy/);
+  assert.doesNotMatch(html, /Prompt sensitivity|correction process/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/);
 });
 
 test("ships the reconciled data and GitHub Pages build surface", async () => {
-  const [page, layout, data, packageJson, nextConfig] = await Promise.all([
+  const [page, layout, app, data, packageJson, nextConfig] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/atlas-app.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/data/atlas-data.json", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
     readFile(new URL("../next.config.ts", import.meta.url), "utf8"),
@@ -41,6 +43,8 @@ test("ships the reconciled data and GitHub Pages build surface", async () => {
   assert.ok(parsed.hudson.entries.length >= 80);
   assert.match(page, /atlas-data\.json/);
   assert.match(layout, /Federal Criminal Common Law Atlas/);
+  assert.doesNotMatch(app, /counsel-only citator artifacts|confirmed false positive|<span>Status<\/span>/);
+  assert.match(app, /excluded from the research explorer and role charts/);
   assert.match(packageJson, /"build:pages"/);
   assert.match(nextConfig, /output:\s*pagesBuild\s*\?\s*"export"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
