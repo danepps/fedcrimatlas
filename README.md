@@ -2,6 +2,8 @@
 
 A static, searchable companion to the federal criminal common-lawmaking census. The Atlas includes:
 
+**Live site:** https://danepps.github.io/fedcrimatlas/
+
 - change-over-time figures for the 896-case corpus;
 - a Hudson & Goodwin citation genealogy that separates judicial use from counsel-only and false-positive citator records;
 - filters and coded evidence for every included case; and
