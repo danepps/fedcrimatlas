@@ -53,3 +53,39 @@ test("ships the reconciled data and GitHub Pages build surface", async () => {
   assert.match(nextConfig, /output:\s*pagesBuild\s*\?\s*"export"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 });
+
+test("ships the plain-English explainer without breaching the research/audit boundary", async () => {
+  const app = await readFile(new URL("../app/atlas-app.tsx", import.meta.url), "utf8");
+
+  // The explainer is a nav-reachable view.
+  assert.match(app, /function HowItWorksView/);
+  assert.match(app, /\["how", "How it works"\]/);
+  assert.match(app, /view === "how" && <HowItWorksView/);
+
+  // It must live BELOW MethodsView. The explainer discusses adjudication, prompt
+  // sensitivity, and the verification asymmetry by design; defining it above
+  // MethodsView would pull that language into the research-view slice asserted
+  // clean in the test above.
+  assert.ok(
+    app.indexOf("function HowItWorksView") > app.indexOf("function MethodsView"),
+    "HowItWorksView must be declared after MethodsView to stay outside the research-view slice",
+  );
+
+  // The explainer must keep its load-bearing caveats: they are the reason the
+  // page exists for a non-technical reader.
+  const explainer = app.slice(app.indexOf("const MODE_GLOSSARY"));
+  for (const caveat of [
+    /prompt wording moves the results/i,
+    /agreements were never audited/i,
+    /could only push the number up/i,
+    /50\.8%/,
+    /human-coded gold set/i,
+  ]) {
+    assert.match(explainer, caveat);
+  }
+
+  // The default landing view is still the research view, not the explainer.
+  const html = await (await render()).text();
+  assert.doesNotMatch(html, /How the study works/);
+  assert.match(html, /How it works/);
+});

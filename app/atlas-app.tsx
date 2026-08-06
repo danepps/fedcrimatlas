@@ -471,6 +471,379 @@ function MethodsView({ data }: { data: AtlasData }) {
   );
 }
 
+const MODE_GLOSSARY = [
+  {
+    label: "old soil",
+    gloss: "The Court says a word in the statute was borrowed from older law, so it arrives carrying that older law’s meaning. “If a word is obviously transplanted, it brings the old soil with it.”",
+    example: "Reading “knowingly” to import the common law’s intent requirement — Morissette v. United States, 342 U.S. 246 (1952).",
+  },
+  {
+    label: "evolving",
+    gloss: "The Court reads an old statute using law that came later — above all the Model Penal Code (1962), but also modern treatises and trends in state law.",
+    example: "Adopting the Model Penal Code’s “substantial step” test for attempt.",
+  },
+  {
+    label: "creation",
+    gloss: "The rule comes from neither a settled older backdrop nor a modern body of law. The Court builds it, usually reasoning from blameworthiness or practical consequence.",
+    example: "The entrapment defense — Sorrells v. United States, 287 U.S. 435 (1932).",
+  },
+  {
+    label: "common-law offense",
+    gloss: "There is no criminal statute at all — either a genuine common-law prosecution, or a holding about whether federal common-law crimes can exist.",
+    example: "United States v. Hudson & Goodwin, 11 U.S. (7 Cranch) 32 (1812); after 1816 the category survives only in criminal contempt.",
+  },
+  {
+    label: "none",
+    gloss: "Ordinary statutory interpretation. The text resolves the question and the Court follows it. No common-law-like move.",
+    example: "436 of the 896 cases.",
+  },
+];
+
+const HOOK_GLOSSARY = [
+  ["term-anchored", "The statute contains the loaded term of art, and its inherited meaning does the work."],
+  ["term-anchored (explicit)", "The statute orders the transplant. Congress wrote “piracy, as defined by the law of nations” — the Court did not choose the old soil."],
+  ["silence-filling", "The statute says nothing on the question and the Court supplies the answer."],
+  ["text-overriding", "The statute does speak, and the Court’s reading bends or overrides it."],
+  ["conventional", "The text resolves the issue and the Court follows."],
+  ["no statute", "There is no offense statute at all."],
+];
+
+const ACK_GLOSSARY = [
+  ["explicit", "The Court admits the choice. “Congress, of course, has never spoken on the subject, and so the decision is left to the courts.” — Mathews v. United States, 485 U.S. 58 (1988)."],
+  ["presented as compelled", "A real choice, framed as required, derived, or long settled. This is the category the argument turns on."],
+  ["contested", "A concurrence or dissent calls out the lawmaking the majority denies."],
+  ["not addressed", "The move is made silently — no admission, no compelled framing, no dissent."],
+  ["disclaims", "The Court expressly denies having any lawmaking power. “It is the legislature, not the court, which is to define a crime.” — United States v. Wiltberger, 18 U.S. (5 Wheat.) 76 (1820)."],
+];
+
+const CAVEATS = [
+  {
+    title: "Prompt wording moves the results",
+    body: "The clearest warning sign in the project. The same model, reading the same 20 cases, returned 55% “none” when the instructions cautioned against over-coding and 15% without that sentence. Eight of twenty verdicts flipped. The affected run was quarantined and excluded. The lesson stands: 51.3% is the answer under a specific frozen protocol, not a fact of nature.",
+  },
+  {
+    title: "The agreements were never audited",
+    body: "Verification effort went to cases where the two readers disagreed. But 735 of 896 cases — 82% — are ones where they agreed, and those supply 432 of the 460 movers. Two models trained on overlapping material, reading the same codebook, can be wrong in the same direction. No random sample of the agreements has been checked against an independent standard.",
+  },
+  {
+    title: "The verification step could only push the number up",
+    body: "Only the 57 adjudications that changed a verdict were re-read. By construction, overturning one could only restore the prior answer — and the headline moved up, 457 to 460. The 51 adjudications that confirmed the standing verdict were never re-read. This does not make 460 too high; it means the correction channel ran one way and should be disclosed.",
+  },
+  {
+    title: "The margin is thin",
+    body: "51.3% is 1.3 points above half. Five of the 460 movers rest entirely on a separate opinion — a dissent or concurrence making the move, not the Court. Counting majority opinions only gives 455/896 = 50.8%. Still more than half, barely.",
+  },
+  {
+    title: "Quotations were checked against the wrong text",
+    body: "Quotation verification ran against CourtListener’s opinion text, which for older cases is OCR of scanned volumes and contains errors. Anything quoted in print must be re-checked against the official U.S. Reports.",
+  },
+  {
+    title: "644 smaller disputes are unresolved",
+    body: "Across 406 cases the two readers still disagree on finer points — which kind of old soil, whether a treatise was used. None can change the headline or the acknowledgment table. They do mean the subtype and source-use breakdowns are directional, not final.",
+  },
+  {
+    title: "Scope",
+    body: "This is a census of Supreme Court merits opinions. It says nothing directly about federal prosecutions generally or about the lower courts. And frequency alone does not establish that anything is illegitimate — that is the article’s argument, not the data’s.",
+  },
+];
+
+const IMPROVEMENTS = [
+  {
+    title: "Audit the agreements",
+    body: "Draw a random sample of cases where both readers agreed — say 30 “law” and 30 “none” — and have them read against a genuinely independent standard. Declare the sample size, seed, and stopping rule in advance so the result cannot be shopped. Weight back to the full corpus and report the corrected estimate with its margin of error. If “more than half” is load-bearing, this is what makes it defensible.",
+  },
+  {
+    title: "Publish the robustness numbers before anyone asks",
+    body: "State 50.8% — majority opinions only — in the text or an early footnote. Volunteering it is far stronger than conceding it under questioning.",
+  },
+  {
+    title: "Close the provenance hole",
+    body: "Have every coding and adjudication run record itself: model, settings, exact prompt text, codebook version, timestamp. Twenty lines of code. Cheap now, unfixable once memory of the run fades.",
+  },
+  {
+    title: "State the verification asymmetry",
+    body: "Wherever 460 is defended, say plainly that only verdict-changing decisions were re-read. Optionally re-read the 51 confirming ones.",
+  },
+  {
+    title: "Build a human-coded gold set",
+    body: "The deepest answer to “why believe a machine read these correctly?” is a set of cases coded by hand, against which the machine coding can be scored. Even 50 cases would yield a real accuracy figure instead of an agreement figure. That is the difference between “two readers agreed” and “the coding is right.”",
+  },
+  {
+    title: "Test the prompt sensitivity systematically",
+    body: "Rather than treating it only as a caveat, run a large sample under two or three deliberately different framings and report the range. A headline stated as a range under stated stringency is more honest, and harder to attack, than a point estimate with a footnote.",
+  },
+];
+
+function HowItWorksView({ data }: { data: AtlasData }) {
+  const summary = data.summary;
+  const headline = summary.headline;
+  const prompt = summary.prompt_sensitivity;
+
+  return (
+    <main id="main-content">
+      <section className="methods-hero">
+        <p className="eyebrow">Plain-English guide</p>
+        <h1>How the study works</h1>
+        <p>
+          No technical background assumed. This page explains what was counted, what the categories mean,
+          how {headline.cases} cases were actually read, what came out, and where the study is weakest.
+        </p>
+      </section>
+
+      <section className="content-section">
+        <SectionIntro kicker="The question" title="Why count at all">
+          The claim is that the Supreme Court makes federal criminal law far more often than the official
+          story admits — and that is a claim about frequency, not about any one case.
+        </SectionIntro>
+        <div className="prose">
+          <p>
+            Since <em>United States v. Hudson &amp; Goodwin</em>, 11 U.S. (7 Cranch) 32 (1812), the official
+            story has been that there are no federal common-law crimes: Congress defines federal offenses and
+            courts merely apply what Congress wrote. Testing that story with a handful of famous counterexamples
+            proves nothing about how common the practice is. So instead of arguing from examples, we counted.
+          </p>
+          <p>
+            The question this study answers is narrow and answerable: across the Supreme Court’s entire history
+            of deciding what federal criminal statutes mean, in how many cases did the Court supply the governing
+            rule itself rather than take it from the statutory text? Getting there took three separate jobs.
+          </p>
+        </div>
+        <div className="step-grid">
+          <article><span>Step 1</span><h3>Decide which cases count</h3><p>Build a defensible list of every Supreme Court decision resolving a question of substantive federal criminal liability.</p></article>
+          <article><span>Step 2</span><h3>Decide what is being counted</h3><p>Write a codebook that defines every label a reader is allowed to apply, with examples and tie-breaking rules.</p></article>
+          <article><span>Step 3</span><h3>Read every case</h3><p>Code all {headline.cases} twice, independently, with a quotation required for every judgment, and referee the disagreements blind.</p></article>
+        </div>
+      </section>
+
+      <section className="content-section">
+        <SectionIntro kicker="Step one" title="Building the case list">
+          The census is the part of the study that decides what the denominator is — and a denominator chosen
+          loosely would make every rate meaningless.
+        </SectionIntro>
+        <div className="prose">
+          <p>
+            We could not simply count “criminal cases.” We needed every decision resolving a question of{" "}
+            <strong>substantive federal criminal liability</strong>: what conduct a federal crime covers, what
+            mental state it requires, who can be held responsible, and what defenses exist.
+          </p>
+          <p>
+            <strong>Finding candidates.</strong> A battery of 28 searches against CourtListener — a free, complete
+            database of American judicial opinions — for terms like “indictment,” “18 U.S.C.,” and “Criminal Code.”
+            Pooled and de-duplicated, that produced 5,259 candidates. Because searches miss things, we added a
+            hand-built list of 186 cases already known to be relevant. A recall test showed the searches alone
+            caught 175 of 182 known in-scope cases; the misses were short early opinions — <em>Hudson &amp; Goodwin</em>{" "}
+            among them — that happen to use none of the searched vocabulary.
+          </p>
+          <p>
+            <strong>Sorting them.</strong> We wrote an inclusion rubric stating in advance what counts. In: elements
+            of federal offenses, mens rea rules, conspiracy and accomplice doctrine, attempt, causation, defenses,
+            rule-of-lenity holdings, and the existence of federal common-law crimes. Out, each with a reason
+            recorded: criminal procedure, habeas, sentencing, evidence, jurisdiction, state prosecutions, civil
+            cases, and database artifacts such as duplicate records and misfiled opinions.
+          </p>
+          <p>
+            Every one of the roughly 5,000 candidates was classified against that rubric. Genuinely hard categories —
+            criminal contempt, civil cases construing a criminal statute, territorial crimes, statutory presumptions,
+            immunity defenses — were resolved by written rules, and each such case carries a flag recording which
+            rule brought it in. That matters: if we later decide criminal contempt should not count, those cases
+            come out with a database query rather than a re-reading.
+          </p>
+        </div>
+        <div className="callout">
+          <strong>Result: {headline.cases} cases, spanning 1793 to 2026.</strong>
+          <p>Every rate on this site uses that number, or a stated subset of it, as its denominator.</p>
+        </div>
+      </section>
+
+      <section className="content-section">
+        <SectionIntro kicker="Step two" title="The categories">
+          The codebook is the study’s dictionary. It went through six revisions as real cases defeated earlier
+          versions, and every revision is dated and logged.
+        </SectionIntro>
+        <h3 className="sub-head">What kind of move did the Court make?</h3>
+        <p className="sub-deck">
+          This is the central variable, and the one that produces the headline. A case can carry more than one
+          label — the Court may make one kind of move on one issue and another elsewhere. For the headline a case
+          counts <em>once</em> if it makes any qualifying move.
+        </p>
+        <div className="def-list">
+          {MODE_GLOSSARY.map((row) => (
+            <article key={row.label}>
+              <strong>{row.label}</strong>
+              <p>{row.gloss}</p>
+              <small>{row.example}</small>
+            </article>
+          ))}
+        </div>
+
+        <h3 className="sub-head">How much text did the Court have to work with?</h3>
+        <p className="sub-deck">
+          The difference between interpreting a word and inventing a rule. This field records how big the gap was.
+        </p>
+        <dl className="def-table">
+          {HOOK_GLOSSARY.map(([term, gloss]) => (
+            <div key={term}><dt>{term}</dt><dd>{gloss}</dd></div>
+          ))}
+        </dl>
+
+        <h3 className="sub-head">Did the Court admit it was making law?</h3>
+        <p className="sub-deck">
+          The article’s rhetorical claim, made measurable. When the Court fills a gap, does it say so?
+        </p>
+        <dl className="def-table">
+          {ACK_GLOSSARY.map(([term, gloss]) => (
+            <div key={term}><dt>{term}</dt><dd>{gloss}</dd></div>
+          ))}
+        </dl>
+
+        <h3 className="sub-head">What materials did the Court use?</h3>
+        <div className="prose">
+          <p>
+            A further set of fields records whether the Court relied on, rejected, or never mentioned the Model
+            Penal Code, Blackstone, other treatises, state court decisions, legislative history, and the rule of
+            lenity — plus whether the opinion engaged in explicit moral or practical line-drawing.
+          </p>
+          <p>
+            Several fine-grained rules accumulated here, each because a real case forced the question. Citations
+            appearing only in <strong>counsel’s arguments</strong> — which the old U.S. Reports printed alongside
+            opinions — do not count; that is the lawyers talking, not the Court. Uses in a{" "}
+            <strong>concurrence or dissent</strong> do count, but must be labeled as such. And “legislative history”
+            was ultimately defined broadly, covering predecessor statutes and later amendments as well as committee
+            reports, with each tagged so the narrow definition stays recoverable by filter. That was necessary
+            because pre-1940 courts rarely cited committee reports but constantly traced statutory lineage; the
+            narrow definition would have flattened the early era to near zero and destroyed any claim about change
+            over time.
+          </p>
+        </div>
+      </section>
+
+      <section className="content-section">
+        <SectionIntro kicker="Step three" title="How the cases were read">
+          Every judgment in this database is anchored to a quotation, made twice by independent readers, and
+          refereed blind where they disagreed.
+        </SectionIntro>
+        <div className="prose">
+          <p>
+            <strong>Who read them.</strong> Large language models, each reading the complete text of one case at a
+            time. Every reader received exactly two documents: the full case file — all opinions, majority and
+            separate — and the current codebook. They were instructed to read nothing else. No searching, no
+            outside knowledge, no other cases.
+          </p>
+          <p>
+            <strong>The evidence rule.</strong> This is the single most important discipline in the study. A reader
+            cannot simply assert a label. Every coding must return the label, a <em>verbatim quotation</em> from the
+            opinion supporting it, a page pincite, and a confidence score. A script then mechanically checks every
+            quotation back against the stored opinion text; mismatches are flagged and repaired before anything is
+            loaded. There are currently zero unverified-quote markers in the database.
+          </p>
+          <p>
+            <strong>Two independent readers.</strong> All {headline.cases} cases were coded at least twice by
+            different models working independently and blind to each other. Not one case rests on a single reading.
+          </p>
+          <p>
+            <strong>A blind referee.</strong> Where the two readers split on something that could move a reported
+            number, the case went to a third model acting as referee. The referee saw the case, the codebook, and a
+            packet showing the two competing answers labeled only <em>A</em> and <em>B</em> — never which model
+            produced which, with the labels shuffled per case. This matters: a referee who knows the source defers
+            to the reader it thinks is stronger instead of reading the opinion. The referee also had to find its own
+            supporting quotation rather than copy one.
+          </p>
+          <p>
+            <strong>Checking the referee.</strong> Every decision that actually flipped a verdict was re-read by a
+            fresh referee, again blind, and again without seeing the first referee’s answer. The two agreed in 52 of
+            57. The five disagreements went to a third reader, best two of three.
+          </p>
+        </div>
+        <div className="flow-chart">
+          {summary.adjudication_flow.map((row, index: number) => (
+            <div key={row.stage}><span>{index + 1}</span><strong>{row.movers}</strong><p>{row.stage}</p><small>{row.rate}% of {headline.cases}</small></div>
+          ))}
+        </div>
+        <div className="callout">
+          <strong>Where it all lives</strong>
+          <p>
+            A single database holding the cases, the full opinion texts, every coding from every run with its
+            quotation, and citation links between cases. Because a case may carry conflicting codings, the database
+            has a built-in rule for which one wins — refereed answers beat original codings — and all analysis goes
+            through that rule rather than anyone re-deriving it by hand. A snapshot was saved before each
+            irreversible step, so any result can be traced backward.
+          </p>
+        </div>
+      </section>
+
+      <section className="content-section">
+        <SectionIntro kicker="Step four" title="What came out">
+          The headline, and the shape of the change over time.
+        </SectionIntro>
+        <div className="hero-stats" aria-label="Headline findings">
+          <div><strong>{headline.movers}</strong><span>of {headline.cases} cases make at least one common-law-like move</span></div>
+          <div><strong>{headline.rate}%</strong><span>of the corpus, under codebook {String(data.meta.codebook)}</span></div>
+        </div>
+        <div className="prose">
+          <p>
+            Among those {headline.movers} cases, fewer than one in ten openly admits the choice. The rate by period
+            is <strong>U-shaped, not a steady decline</strong> — the early-twentieth-century trough is followed by a
+            post-1940 rebound — and the mechanism shifts underneath it, from old soil in the nineteenth century to
+            creation after 1900.
+          </p>
+        </div>
+        <div className="robustness-table">
+          {summary.by_period.map((row) => (
+            <div className="robustness-row" key={row.period}>
+              <strong>{row.period}</strong>
+              <span>{row.movers}/{row.cases}</span>
+              <Bar value={row.rate} tone="rust" />
+              <b>{row.rate}%</b>
+            </div>
+          ))}
+        </div>
+        <p className="sub-deck">
+          These are descriptive comparisons between periods of a constructed corpus, not causal estimates.
+          The Change-over-time view breaks the same data down by mode, acknowledgment, and source use.
+        </p>
+      </section>
+
+      <section className="content-section">
+        <SectionIntro kicker="Honest accounting" title="Where the study is weakest">
+          These are the real vulnerabilities, stated plainly. They should travel with any number taken from this site.
+        </SectionIntro>
+        <div className="caveat-grid">
+          {CAVEATS.map((row, index) => (
+            <article key={row.title}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{row.title}</h3>
+              <p>{row.body}</p>
+            </article>
+          ))}
+        </div>
+        <div className="callout">
+          <strong>The measurement warning in one line</strong>
+          <p>
+            On the same {prompt.cases} cases, the same model coded {prompt.anti_overcoding_none_rate}% “none” with a
+            cautioning instruction and {prompt.unqualified_prompt_none_rate}% without it.{" "}
+            {prompt.headline_flips} verdicts flipped. {prompt.note}
+          </p>
+        </div>
+      </section>
+
+      <section className="content-section">
+        <SectionIntro kicker="Next" title="What would make it stronger">
+          Roughly ordered by value per unit of effort.
+        </SectionIntro>
+        <ol className="improve-list">
+          {IMPROVEMENTS.map((row) => (
+            <li key={row.title}><strong>{row.title}.</strong> {row.body}</li>
+          ))}
+        </ol>
+        <p className="sub-deck">
+          The remaining mode-granularity disputes are deliberately left alone unless mode composition becomes
+          load-bearing in the argument. They cannot move the headline, and the effort is better spent on the first item.
+        </p>
+      </section>
+    </main>
+  );
+}
+
 export function AtlasApp({ data: rawData }: { data: unknown }) {
   const data = rawData as AtlasData;
   const [view, setView] = useState("change");
@@ -488,13 +861,14 @@ export function AtlasApp({ data: rawData }: { data: unknown }) {
       <header className="site-header">
         <button className="wordmark" onClick={() => setView("change")} aria-label="Federal Criminal Common Law Atlas home"><span>FCCL</span><b>Atlas</b></button>
         <nav aria-label="Primary navigation">
-          {[["change", "Change over time"], ["hudson", "Hudson genealogy"], ["cases", "Case Atlas"], ["methods", "Methods"]].map(([id, label]) => <button key={id} className={view === id ? "active" : ""} onClick={() => setView(id)}>{label}</button>)}
+          {[["change", "Change over time"], ["hudson", "Hudson genealogy"], ["cases", "Case Atlas"], ["how", "How it works"], ["methods", "Methods"]].map(([id, label]) => <button key={id} className={view === id ? "active" : ""} onClick={() => setView(id)}>{label}</button>)}
         </nav>
         <div className="header-meta">Data through Aug. 5, 2026</div>
       </header>
       {view === "change" && <ChangeView data={data} />}
       {view === "hudson" && <HudsonView data={data} onOpenCase={openCase} />}
       {view === "cases" && <CasesView data={data} selected={selected} setSelected={setSelected} />}
+      {view === "how" && <HowItWorksView data={data} />}
       {view === "methods" && <MethodsView data={data} />}
       <footer><span>Federal Criminal Common Law Atlas</span><p>896 Supreme Court cases · 1789–2026 · Updated Aug. 5, 2026</p></footer>
     </div>

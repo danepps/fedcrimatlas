@@ -216,6 +216,38 @@ blockquote { margin: 18px 0; padding-left: 18px; border-left: 3px solid var(--go
 .limits-list { max-width: 900px; display: grid; gap: 14px; padding-left: 22px; }
 .limits-list li { padding-left: 8px; }
 
+/* ---- How it works (plain-English explainer) ---- */
+.prose { max-width: 74ch; }
+.prose p { margin: 0 0 18px; font-size: 17px; line-height: 1.62; color: var(--ink-soft); }
+.prose p strong { color: var(--ink); }
+.prose p:last-child { margin-bottom: 0; }
+.sub-head { max-width: 74ch; margin: 52px 0 10px; font: 500 30px/1.15 Georgia, serif; letter-spacing: -.015em; }
+.content-section > .sub-head:first-of-type { margin-top: 0; }
+.sub-deck { max-width: 74ch; margin: 0 0 26px; color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+.step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 44px; background: var(--line); }
+.step-grid article { background: var(--white); padding: 26px 24px 28px; }
+.step-grid article > span { display: block; color: var(--rust); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.step-grid h3 { margin: 12px 0 10px; font: 500 24px/1.15 Georgia, serif; }
+.step-grid p { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.55; }
+.def-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
+.def-list article { background: var(--white); border: 1px solid var(--line); border-left: 4px solid var(--rust); padding: 22px; }
+.def-list article > strong { display: block; margin-bottom: 10px; font: 500 22px/1.1 Georgia, serif; color: var(--rust-dark); }
+.def-list article > p { margin: 0 0 14px; font-size: 14px; line-height: 1.58; color: var(--ink-soft); }
+.def-list article > small { display: block; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 12px; line-height: 1.5; }
+.def-table { max-width: 1000px; margin: 0; border-top: 1px solid var(--ink); }
+.def-table div { display: grid; grid-template-columns: 230px 1fr; gap: 26px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+.def-table dt { font-weight: 800; font-size: 14px; }
+.def-table dd { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.55; }
+.caveat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 1px; background: var(--line); }
+.caveat-grid article { background: var(--white); padding: 26px 24px 28px; }
+.caveat-grid article > span { color: var(--rust); font: 500 22px/1 Georgia, serif; }
+.caveat-grid h3 { margin: 10px 0 10px; font: 500 21px/1.18 Georgia, serif; }
+.caveat-grid p { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.58; }
+.improve-list { max-width: 88ch; display: grid; gap: 18px; margin: 0 0 26px; padding-left: 24px; }
+.improve-list li { padding-left: 8px; color: var(--ink-soft); font-size: 16px; line-height: 1.6; }
+.improve-list li strong { color: var(--ink); }
+.improve-list li::marker { color: var(--rust); font-weight: 800; }
+
 footer { min-height: 150px; padding: 42px 6vw; display: flex; justify-content: space-between; align-items: start; gap: 20px; background: var(--ink); color: white; }
 footer span { font: 500 24px/1 Georgia, serif; }
 footer p { margin: 0; color: rgba(255,255,255,.55); font-size: 12px; }
@@ -230,6 +262,7 @@ footer p { margin: 0; color: rgba(255,255,255,.55); font-size: 12px; }
   .phase-timeline article { border-bottom: 1px solid var(--line); }
   .case-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .methods-grid { grid-template-columns: 1fr 1fr; }
+  .step-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 760px) {
@@ -265,6 +298,11 @@ footer p { margin: 0; color: rgba(255,255,255,.55); font-size: 12px; }
   .case-drawer dl div { grid-template-columns: 1fr; gap: 3px; }
   .citation-links { grid-template-columns: 1fr; }
   .methods-grid { grid-template-columns: 1fr; padding: 0 24px 64px; }
+  .sub-head { font-size: 25px; }
+  .def-table div { grid-template-columns: 1fr; gap: 5px; }
+  .def-list { grid-template-columns: 1fr; }
+  .caveat-grid { grid-template-columns: 1fr; }
+  .improve-list { padding-left: 20px; }
   footer { display: block; padding: 38px 24px; }
   footer p { margin-top: 12px; }
 }
