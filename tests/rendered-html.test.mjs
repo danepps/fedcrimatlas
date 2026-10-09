@@ -37,8 +37,10 @@ test("ships the reconciled data and GitHub Pages build surface", async () => {
   ]);
   const parsed = JSON.parse(data);
   assert.equal(parsed.cases.length, 896);
-  assert.equal(parsed.summary.headline.movers, 460);
-  assert.equal(parsed.summary.headline.rate, 51.3);
+  assert.equal(parsed.summary.headline.movers, 445);
+  assert.equal(parsed.summary.headline.rate, 49.7);
+  assert.equal(parsed.meta.codebook, "v0.7");
+  assert.equal(parsed.meta.cutoff, "2026-09-26");
   const opinionUrl = /^https:\/\/www\.courtlistener\.com\/opinion\/\d+\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/;
   assert.equal(parsed.cases.filter((item) => opinionUrl.test(item.full_text_url)).length, 896);
   assert.equal(new Set(parsed.cases.map((item) => item.full_text_url)).size, 896);
