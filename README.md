@@ -8,7 +8,8 @@ A static, searchable companion to the federal criminal common-lawmaking census. 
 - a Hudson & Goodwin genealogy of 76 verified judicial uses across five interpretive phases;
 - filters and coded evidence for every included case;
 - a direct, case-slugged CourtListener full-opinion link for every included case; and
-- a methods page describing double coding, adjudication, prompt sensitivity, and unresolved smaller disputes.
+- a methods page describing double coding, adjudication, prompt sensitivity, unresolved smaller disputes, and the dated record of the preregistered human validation study; and
+- a plain-English "How it works" explainer.
 
 ## Refresh the data
 
@@ -46,7 +47,8 @@ No database server, API key, or runtime environment variable is required. All At
 
 ## Data cautions
 
-- The 460/896 headline and acknowledgment distribution are final under codebook v0.6.
+- The 445/896 (49.7%) headline and acknowledgment distribution are final under codebook v0.7 (2026-09-26); the v0.6 figure was 460/896 (51.3%). `meta.codebook` and `meta.cutoff` are read from the heading of `Database/codebook.md`.
+- The human validation study (two RAs, 168-case stratified sample, preregistered 2026-08-27) is in progress: calibration complete, 20-case pilot opened 2026-10-09. The dated status record is hardcoded in `app/atlas-app.tsx` (`VALIDATION_RECORD`) and the `adjudication_flow` stages in `build_atlas_data.py`; update both when the pilot or a wave closes.
 - Mode, hook, and source-use detail remains provisional because smaller disputes were intentionally not adjudicated.
 - Modes and acknowledgments are nonexclusive.
 - The general citation graph is a regex-derived floor.

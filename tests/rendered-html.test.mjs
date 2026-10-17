@@ -20,7 +20,8 @@ test("server-renders the Atlas shell and headline findings", async () => {
   const html = await response.text();
   assert.match(html, /<title>Federal Criminal Common Law Atlas<\/title>/i);
   assert.match(html, /The Court renounced common-law crimes/);
-  assert.match(html, />460</);
+  assert.match(html, />445</);
+  assert.match(html, /49\.7%/);
   assert.match(html, /Hudson genealogy/);
   assert.doesNotMatch(html, /Prompt sensitivity|correction process/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/);
@@ -51,6 +52,9 @@ test("ships the reconciled data and GitHub Pages build surface", async () => {
   const methodsView = app.slice(app.indexOf("function MethodsView"));
   assert.doesNotMatch(researchViews, /counsel-only|false positive|prompt sensitivity|adjudication|<span>Status<\/span>/i);
   assert.match(methodsView, /excluded from the research explorer and role charts/);
+  assert.match(methodsView, /Human validation study/);
+  assert.match(methodsView, /pilot opened Oct\. 9, 2026/);
+  assert.doesNotMatch(app, /460\/896 binary headline|codebook v0\.6\. Multi-mode/);
   assert.match(packageJson, /"build:pages"/);
   assert.match(nextConfig, /output:\s*pagesBuild\s*\?\s*"export"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
@@ -78,9 +82,10 @@ test("ships the plain-English explainer without breaching the research/audit bou
   const explainer = app.slice(app.indexOf("const MODE_GLOSSARY"));
   for (const caveat of [
     /prompt wording moves the results/i,
-    /agreements were never audited/i,
+    /agreements have not been audited yet/i,
     /could only push the number up/i,
-    /50\.8%/,
+    /49\.7%/,
+    /Checking the machine against people/,
     /human-coded gold set/i,
   ]) {
     assert.match(explainer, caveat);

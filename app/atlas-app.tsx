@@ -138,10 +138,10 @@ function ChangeView({ data }: { data: AtlasData }) {
           </p>
         </div>
         <div className="hero-stats" aria-label="Headline findings">
-          <div><strong>460</strong><span>cases with a common-law-like move</span></div>
-          <div><strong>51.3%</strong><span>of the constructed corpus</span></div>
-          <div><strong>389</strong><span>movers framed as compelled or contested</span></div>
-          <div><strong>45</strong><span>movers explicitly owning the choice</span></div>
+          <div><strong>445</strong><span>cases with a common-law-like move (codebook v0.7)</span></div>
+          <div><strong>49.7%</strong><span>of the constructed corpus</span></div>
+          <div><strong>383</strong><span>movers framed as compelled or contested</span></div>
+          <div><strong>43</strong><span>movers explicitly owning the choice</span></div>
         </div>
       </section>
 
@@ -441,11 +441,12 @@ function MethodsView({ data }: { data: AtlasData }) {
       <section className="methods-hero"><p className="eyebrow">How to read the Atlas</p><h1>Method, uncertainty, and reproducibility</h1><p>The site exposes the protocol’s seams because the measurement question is part of the scholarly contribution.</p></section>
       <section className="methods-grid">
         <article><span>01</span><h2>Population</h2><p>The unit is a Supreme Court decision in a constructed census of 896 included federal criminal-law cases, 1789–2026. The corpus is not a random sample and does not support causal inference.</p></article>
-        <article><span>02</span><h2>Independent coding</h2><p>Every included case received at least two independent primary coding runs under codebook v0.6. Multi-mode and multi-acknowledgment coding is nonexclusive.</p></article>
-        <article><span>03</span><h2>Blind adjudication</h2><p>All 179 headline-relevant disputes were adjudicated. Every one of the 57 headline-changing decisions received an independent blind reread; five disagreements received a third tiebreak. A separate 20-case prompt test was quarantined from the headline.</p></article>
-        <article><span>04</span><h2>What is final</h2><p>The 460/896 binary headline and acknowledgment distribution are final under the protocol. Smaller mode, hook, and source-use disputes were intentionally left unresolved and are labeled provisional.</p></article>
+        <article><span>02</span><h2>Independent coding</h2><p>Every included case received at least two independent primary coding runs. The codebook is now v0.7 (Sept. 26, 2026); the original runs were coded under v0.6, and every case touched by the v0.7 scope rules was re-refereed. Multi-mode and multi-acknowledgment coding is nonexclusive.</p></article>
+        <article><span>03</span><h2>Blind adjudication</h2><p>All 179 headline-relevant disputes were adjudicated. Every one of the 57 headline-changing decisions received an independent blind reread; five disagreements received a third tiebreak. The v0.7 recode re-refereed 46 further cases blind, and all 11 resulting flips were independently reread. A separate 20-case prompt test was quarantined from the headline.</p></article>
+        <article><span>04</span><h2>What is final</h2><p>The 445/896 binary headline and acknowledgment distribution are final under codebook v0.7 (460/896 under v0.6). Smaller mode, hook, and source-use disputes were intentionally left unresolved and are labeled provisional.</p></article>
         <article><span>05</span><h2>Hudson audit</h2><p>Commercial citator results were cross-checked against opinion full text. Five counsel-only appearances, one false positive, one unresolved record, and one topic-only record remain in the audit data but are excluded from the research explorer and role charts.</p></article>
         <article><span>06</span><h2>Citation graph</h2><p>The case-to-case graph is extracted by reporter-citation regex from local opinion text. It is a floor: name-only references and OCR failures remain invisible.</p></article>
+        <article><span>07</span><h2>Human validation</h2><p>Two research assistants are independently coding a preregistered, stratified sample of 168 cases against the machine coding. Calibration is complete and the 20-case pilot opened Oct. 9, 2026. The dated record is below.</p></article>
       </section>
       <section className="content-section">
         <SectionIntro kicker="Measurement audit" title="How the headline was tested">
@@ -460,6 +461,12 @@ function MethodsView({ data }: { data: AtlasData }) {
           <strong>Prompt sensitivity check</strong>
           <p>On the same 20 cases, a same-model shadow run coded 55% “none” with the anti-overcoding instruction and 15% without it. Eight headline verdicts flipped. The unqualified run was quarantined and never entered the Atlas headline.</p>
         </div>
+      </section>
+      <section className="content-section">
+        <SectionIntro kicker="Human validation study" title="Checking the machine coding against independent human readers">
+          Design and decision rules were preregistered on Aug. 27, 2026, before any human coding. This is the dated record as of Oct. 17, 2026; training blocks enter no estimate.
+        </SectionIntro>
+        <ValidationRecord />
       </section>
       <section className="content-section">
         <SectionIntro kicker="Known limits" title="Precision without false certainty">
@@ -495,7 +502,7 @@ const MODE_GLOSSARY = [
   {
     label: "none",
     gloss: "Ordinary statutory interpretation. The text resolves the question and the Court follows it. No common-law-like move.",
-    example: "436 of the 896 cases.",
+    example: "451 of the 896 cases.",
   },
 ];
 
@@ -519,19 +526,19 @@ const ACK_GLOSSARY = [
 const CAVEATS = [
   {
     title: "Prompt wording moves the results",
-    body: "The clearest warning sign in the project. The same model, reading the same 20 cases, returned 55% “none” when the instructions cautioned against over-coding and 15% without that sentence. Eight of twenty verdicts flipped. The affected run was quarantined and excluded. The lesson stands: 51.3% is the answer under a specific frozen protocol, not a fact of nature.",
+    body: "The clearest warning sign in the project. The same model, reading the same 20 cases, returned 55% “none” when the instructions cautioned against over-coding and 15% without that sentence. Eight of twenty verdicts flipped. The affected run was quarantined and excluded. The lesson stands: 49.7% is the answer under a specific frozen protocol, not a fact of nature.",
   },
   {
-    title: "The agreements were never audited",
-    body: "Verification effort went to cases where the two readers disagreed. But 735 of 896 cases — 82% — are ones where they agreed, and those supply 432 of the 460 movers. Two models trained on overlapping material, reading the same codebook, can be wrong in the same direction. No random sample of the agreements has been checked against an independent standard.",
+    title: "The agreements have not been audited yet",
+    body: "Verification effort went to cases where the two readers disagreed. But 735 of 896 cases — 82% — are ones where they agreed, and those supply 420 of the 445 movers. Two models trained on overlapping material, reading the same codebook, can be wrong in the same direction. The human validation study below samples exactly these agreement strata; until its estimation waves are coded, no random sample of the agreements has been checked against an independent standard.",
   },
   {
     title: "The verification step could only push the number up",
-    body: "Only the 57 adjudications that changed a verdict were re-read. By construction, overturning one could only restore the prior answer — and the headline moved up, 457 to 460. The 51 adjudications that confirmed the standing verdict were never re-read. This does not make 460 too high; it means the correction channel ran one way and should be disclosed.",
+    body: "In the August 2026 adjudication, only the 57 decisions that changed a verdict were re-read. By construction, overturning one could only restore the prior answer — and the headline moved up, 457 to 460. The 51 adjudications that confirmed the standing verdict were never re-read. The September 2026 recode ran the other way: it re-refereed 46 cases flagged by a pleading-vocabulary screen, and that screen could only remove movers (460 to 445). Neither channel was symmetric, and both should be disclosed.",
   },
   {
-    title: "The margin is thin",
-    body: "51.3% is 1.3 points above half. Five of the 460 movers rest entirely on a separate opinion — a dissent or concurrence making the move, not the Court. Counting majority opinions only gives 455/896 = 50.8%. Still more than half, barely.",
+    title: "The margin is thin — and now sits on the other side of half",
+    body: "49.7% is 0.3 points under half. Under codebook v0.6 the figure was 51.3%; the v0.7 scope rules — majority opinion only, and the move must supply content of the offense or defense — removed fifteen movers. The honest statement is “about half.” Whether the true figure is just above or just below 50% is inside the measurement noise, and only the validation study’s confidence interval can narrow it.",
   },
   {
     title: "Quotations were checked against the wrong text",
@@ -539,7 +546,7 @@ const CAVEATS = [
   },
   {
     title: "644 smaller disputes are unresolved",
-    body: "Across 406 cases the two readers still disagree on finer points — which kind of old soil, whether a treatise was used. None can change the headline or the acknowledgment table. They do mean the subtype and source-use breakdowns are directional, not final.",
+    body: "Across 406 cases (counted before the v0.7 recode) the two readers still disagree on finer points — which kind of old soil, whether a treatise was used. None can change the headline or the acknowledgment table. They do mean the subtype and source-use breakdowns are directional, not final.",
   },
   {
     title: "Scope",
@@ -550,29 +557,73 @@ const CAVEATS = [
 const IMPROVEMENTS = [
   {
     title: "Audit the agreements",
-    body: "Draw a random sample of cases where both readers agreed — say 30 “law” and 30 “none” — and have them read against a genuinely independent standard. Declare the sample size, seed, and stopping rule in advance so the result cannot be shopped. Weight back to the full corpus and report the corrected estimate with its margin of error. If “more than half” is load-bearing, this is what makes it defensible.",
+    body: "Draw a random sample of cases where both readers agreed and have them read against a genuinely independent standard. Declare the sample size, seed, and stopping rule in advance so the result cannot be shopped. Weight back to the full corpus and report the corrected estimate with its margin of error. If “about half” is load-bearing, this is what makes it defensible.",
+    status: "Under way. The validation sample is stratified on exactly these agreement strata (389 concordant movers, 303 concordant non-movers, 161 discordant, 43 concordant movers adjudicated anyway), with the allocation, random seed, and decision rules fixed on Aug. 27, 2026.",
   },
   {
     title: "Publish the robustness numbers before anyone asks",
-    body: "State 50.8% — majority opinions only — in the text or an early footnote. Volunteering it is far stronger than conceding it under questioning.",
+    body: "State the majority-opinion-only figure and the earlier-codebook figure in the text or an early footnote. Volunteering them is far stronger than conceding them under questioning.",
+    status: "Resolved by rule. Codebook v0.7 makes majority-opinion-only the definition, so the headline is 445/896 = 49.7%; the v0.6 figure, 460/896 = 51.3%, is reported alongside it on this page.",
   },
   {
     title: "Close the provenance hole",
     body: "Have every coding and adjudication run record itself: model, settings, exact prompt text, codebook version, timestamp. Twenty lines of code. Cheap now, unfixable once memory of the run fades.",
+    status: "Partly closed. The v0.7 recode ran through a scripted pipeline that records the referee model, reasoning setting, codebook version, and date for every decision, with quotes verified mechanically. The original August runs remain documented only by their outputs.",
   },
   {
     title: "State the verification asymmetry",
-    body: "Wherever 460 is defended, say plainly that only verdict-changing decisions were re-read. Optionally re-read the 51 confirming ones.",
+    body: "Wherever the headline is defended, say plainly that only verdict-changing decisions were re-read. Optionally re-read the 51 confirming ones.",
+    status: "Stated above (caveat 03). The 51 confirming adjudications have not been re-read.",
   },
   {
     title: "Build a human-coded gold set",
     body: "The deepest answer to “why believe a machine read these correctly?” is a set of cases coded by hand, against which the machine coding can be scored. Even 50 cases would yield a real accuracy figure instead of an agreement figure. That is the difference between “two readers agreed” and “the coding is right.”",
+    status: "Under way. Two research assistants, calibrated across two training blocks, opened the 20-case pilot on Oct. 9, 2026; 168 estimation cases follow if the pilot clears its preregistered gate.",
   },
   {
     title: "Test the prompt sensitivity systematically",
     body: "Rather than treating it only as a caveat, run a large sample under two or three deliberately different framings and report the range. A headline stated as a range under stated stringency is more honest, and harder to attack, than a point estimate with a footnote.",
+    status: "Open.",
   },
 ];
+
+const VALIDATION_RECORD = [
+  {
+    date: "Aug. 27, 2026",
+    title: "Design preregistered",
+    body: "Two research assistants code a stratified sample of 168 of the 896 cases, drawn with a recorded seed from four strata defined by how the machine coding was reached, in three nested waves (72, 48, 48) with a 20-case pilot inside wave 1, 8 training cases outside the sample, and 6 blind repeats. Coders work from the official U.S. Reports text only: no internet, no AI tools, no machine codes, no conferring until a wave closes. Decision rules fixed in advance: agreement (Cohen’s κ) of at least 0.60 on the headline binary is the gate; if the corrected estimate’s confidence interval excludes the machine rate, the corrected estimate becomes primary.",
+  },
+  {
+    date: "Sept. 3–5, 2026",
+    title: "Training block 1: chance agreement",
+    body: "Both coders returned 8 training cases coded under manual v1.0. Agreement on the headline binary was at chance (4 of 8, κ = −0.07). Their notes traced it to three scope questions the manual never answered: whose opinion counts, how to treat glosses on constitutional language, and whether a move must bear on the statute being construed.",
+  },
+  {
+    date: "Sept. 25–26, 2026",
+    title: "Calibration; codebook v0.7",
+    body: "Rules settled and logged in a dated decision log: mode rows come from the opinion of the Court only; constitutional glosses code “none”; a move counts only if it supplies content of the statutory offense or defense. Manual v1.1 issued. Because the machine codebook had counted pleading-only and separate-opinion-only moves that the human instrument now excludes, the machine codebook was amended to v0.7 and the affected cases recoded the same day (460 → 445), recorded as an addendum to the design memo before any pilot case was coded.",
+  },
+  {
+    date: "Oct. 7–9, 2026",
+    title: "Training block 2: gate met; pilot opened",
+    body: "Both coders returned 8 fresh cases from outside the sample, coded under v1.1. Agreement on the headline binary rose to 7 of 8 (κ = 0.71); mode-set overlap from 0.44 to 0.75; all seven source-use fields and the acknowledgment field agreed 8 of 8. The preregistered gate (at least 6 of 8, unsure flags used by both) was met. One open indicator: one coder’s holistic answer still diverges from the derived binary on 3 of 8 cases, to be watched in the pilot. Pilot workbooks were rebuilt under v1.1 and sent; the 20-case pilot is open.",
+  },
+  {
+    date: "Next",
+    title: "Pilot → waves 1–3",
+    body: "Pilot returns are adjudicated blind to coder identity and machine code, then analyzed under the preregistered plan (κ, per-field reliability). If the pilot clears its gate, waves 1–3 follow and yield the corrected headline with roughly ±3.5-point precision. Results will be posted here when the waves close.",
+  },
+];
+
+function ValidationRecord() {
+  return (
+    <dl className="def-table validation-record">
+      {VALIDATION_RECORD.map((row) => (
+        <div key={row.date}><dt>{row.date}<small>{row.title}</small></dt><dd>{row.body}</dd></div>
+      ))}
+    </dl>
+  );
+}
 
 function HowItWorksView({ data }: { data: AtlasData }) {
   const summary = data.summary;
@@ -657,8 +708,8 @@ function HowItWorksView({ data }: { data: AtlasData }) {
 
       <section className="content-section">
         <SectionIntro kicker="Step two" title="The categories">
-          The codebook is the study’s dictionary. It went through six revisions as real cases defeated earlier
-          versions, and every revision is dated and logged.
+          The codebook is the study’s dictionary. It has gone through seven versions as real cases defeated earlier
+          ones, the latest (v0.7, September 2026) prompted by the human coders described in Step five. Every revision is dated and logged.
         </SectionIntro>
         <h3 className="sub-head">What kind of move did the Court make?</h3>
         <p className="sub-deck">
@@ -753,6 +804,14 @@ function HowItWorksView({ data }: { data: AtlasData }) {
             fresh referee, again blind, and again without seeing the first referee’s answer. The two agreed in 52 of
             57. The five disagreements went to a third reader, best two of three.
           </p>
+          <p>
+            <strong>A second pass, September 2026.</strong> When two human coders calibrating on the same codebook
+            exposed scope gaps (Step five), the codebook was amended to v0.7 and the cases affected were re-refereed
+            blind through the same pipeline: 46 cases whose supporting quotations rested on pleading or procedural
+            passages, plus nine where a separate opinion rather than the Court had supplied the move. Fifteen cases
+            left the mover column; every one of the eleven refereed flips was independently reread blind, with a
+            third read where the two disagreed. 460 became 445.
+          </p>
         </div>
         <div className="flow-chart">
           {summary.adjudication_flow.map((row, index: number) => (
@@ -804,6 +863,23 @@ function HowItWorksView({ data }: { data: AtlasData }) {
       </section>
 
       <section className="content-section">
+        <SectionIntro kicker="Step five" title="Checking the machine against people">
+          Two readers agreeing is not the same as the coding being right. The answer to that is a human-coded
+          sample, designed and registered before anyone coded a case, and this is where it stands.
+        </SectionIntro>
+        <div className="prose">
+          <p>
+            Two research assistants are independently coding a stratified sample of 168 cases from the official
+            U.S. Reports text, with no internet, no AI tools, no access to the machine codes, and no conferring
+            until a wave closes. The sample is weighted toward the cases where the two machine readers agreed,
+            because those are the ones the adjudication process never touched. The training blocks exist to make
+            sure the codebook reads the same way to two strangers; they enter no estimate.
+          </p>
+        </div>
+        <ValidationRecord />
+      </section>
+
+      <section className="content-section">
         <SectionIntro kicker="Honest accounting" title="Where the study is weakest">
           These are the real vulnerabilities, stated plainly. They should travel with any number taken from this site.
         </SectionIntro>
@@ -827,12 +903,12 @@ function HowItWorksView({ data }: { data: AtlasData }) {
       </section>
 
       <section className="content-section">
-        <SectionIntro kicker="Next" title="What would make it stronger">
-          Roughly ordered by value per unit of effort.
+        <SectionIntro kicker="Next" title="What would make it stronger, and what has been done">
+          Roughly ordered by value per unit of effort. Status lines are as of Oct. 17, 2026.
         </SectionIntro>
         <ol className="improve-list">
           {IMPROVEMENTS.map((row) => (
-            <li key={row.title}><strong>{row.title}.</strong> {row.body}</li>
+            <li key={row.title}><strong>{row.title}.</strong> {row.body}<span className="improve-status">Status: {row.status}</span></li>
           ))}
         </ol>
         <p className="sub-deck">
@@ -863,14 +939,14 @@ export function AtlasApp({ data: rawData }: { data: unknown }) {
         <nav aria-label="Primary navigation">
           {[["change", "Change over time"], ["hudson", "Hudson genealogy"], ["cases", "Case Atlas"], ["how", "How it works"], ["methods", "Methods"]].map(([id, label]) => <button key={id} className={view === id ? "active" : ""} onClick={() => setView(id)}>{label}</button>)}
         </nav>
-        <div className="header-meta">Data through Aug. 5, 2026</div>
+        <div className="header-meta">Codebook v0.7 · Updated Oct. 17, 2026</div>
       </header>
       {view === "change" && <ChangeView data={data} />}
       {view === "hudson" && <HudsonView data={data} onOpenCase={openCase} />}
       {view === "cases" && <CasesView data={data} selected={selected} setSelected={setSelected} />}
       {view === "how" && <HowItWorksView data={data} />}
       {view === "methods" && <MethodsView data={data} />}
-      <footer><span>Federal Criminal Common Law Atlas</span><p>896 Supreme Court cases · 1789–2026 · Updated Aug. 5, 2026</p></footer>
+      <footer><span>Federal Criminal Common Law Atlas</span><p>896 Supreme Court cases · 1789–2026 · Codebook v0.7 (Sept. 26, 2026) · Site updated Oct. 17, 2026</p></footer>
     </div>
   );
 }
