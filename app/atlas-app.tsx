@@ -45,6 +45,7 @@ type HudsonEntry = {
   contexts: { excerpt: string; opinion_type: string; author: string; roles: string[] }[];
   note: string;
   provenance: string;
+  full_text_url?: string;
 };
 
 type RateRow = { period: string; cases: number; movers: number; rate: number };
@@ -330,6 +331,7 @@ function HudsonView({ data, onOpenCase }: { data: AtlasData; onOpenCase: (id: nu
                 {entry.contexts[0] && <blockquote>{entry.contexts[0].excerpt}</blockquote>}
                 {!entry.contexts[0] && entry.note && !entry.note.includes("OCR") && <p className="entry-note">{entry.note}</p>}
                 {entry.case_id && <button className="text-button" onClick={() => onOpenCase(entry.case_id!)}>Open this case in the Atlas →</button>}
+                {entry.full_text_url && <a className="opinion-link" href={entry.full_text_url} target="_blank" rel="noreferrer">Read full opinion on CourtListener <span aria-hidden="true">↗</span></a>}
               </div>
             </article>
           ))}
